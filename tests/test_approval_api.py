@@ -56,20 +56,19 @@ class APITestCase(unittest.TestCase):
     def test_upsert_approval(self):
         # insert new approval
         approval_data = {
-             "id_num": self.id_num_new,
-             "id_type":"id",
-             "update_system":"website",
-             "update_user":"tsila",
+             "id_type": "id",
+             "update_system": "website",
+             "update_user": "tsila",
              "source_update_date": int(time.time()) - 20,
              "value_update_date": int(time.time()) - 20,
-             "approval_status":"agree"}
+             "approval_status": "agree"}
         response = self.client.post(
-             "upsert_approval", data=approval_data)
+             "approval/{}".format(self.id_num), data=approval_data)
         self.assertEqual(response.status_code, 201)
 
         # check that the new approval exists
         response = self.client.get(
-            '/approval/{id_num}'.format(id_num=self.id_num_new))
+            '/approval/{id_num}'.format(id_num=self.id_num))
         self.assertEqual(response.status_code, 200)
 
         json_response = json.loads(response.get_data(as_text=True))
@@ -80,7 +79,6 @@ class APITestCase(unittest.TestCase):
 
         # edit the new approval
         new_approval_data = {
-            "id_num": self.id_num_new,
             "id_type": "id",
             "update_system": "myPensya",
             "update_user": "tsila",
@@ -88,7 +86,7 @@ class APITestCase(unittest.TestCase):
             "value_update_date": int(time.time()),
             "approval_status": "disagree"}
         response = self.client.post(
-            "upsert_approval", data=new_approval_data)
+            "approval/{}".format(self.id_num_new), data=new_approval_data)
         self.assertEqual(response.status_code, 201)
 
         # check that update is successful
@@ -103,8 +101,7 @@ class APITestCase(unittest.TestCase):
 
         # edit the new approval with earlier value_update_date
         response = self.client.post(
-            "upsert_approval", data={
-            "id_num": self.id_num_new,
+            "approval/{}".format(self.id_num_new), data={
             "id_type": "id",
             "update_system": "sibel",
             "update_user": "tsila",
@@ -127,13 +124,12 @@ class APITestCase(unittest.TestCase):
         # validate errors for post request with missing data
         # with self.assertRaises(ValidationError):
         with self.assertRaises(Exception):
-            self.client.post(
-                "upsert_approval", data={"id_num": "444"})
+            self.client.post("approval/444")
 
     def test_delete_approval(self):
         # delete request
         response = self.client.delete(
-            '/delete_approval/{id_num}'.format(id_num=self.id_num_to_delete))
+            '/approval/{id_num}'.format(id_num=self.id_num_to_delete))
         # check that the approval was deleted
         self.assertEqual(response.status_code, 200)
         response = self.client.get(
@@ -142,7 +138,7 @@ class APITestCase(unittest.TestCase):
 
         # delete request for approval that is not exists
         response = self.client.delete(
-            '/delete_approval/{id_num}'.format(id_num=self.id_num_to_delete))
+            '/approval/{id_num}'.format(id_num=self.id_num_to_delete))
         # check error
         self.assertEqual(response.status_code, 404)
         json_response = json.loads(response.get_data(as_text=True))

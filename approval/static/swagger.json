@@ -1,0 +1,251 @@
+{
+  "info": {
+    "description": "Approvals API",
+    "version": "1.0.0",
+    "title": "Approvals API",
+    "contact": {
+      "email": ""
+    }
+  },
+  "swagger": "2.0",
+
+  "paths": {
+    "/approval/{approval_id}": {
+      "parameters": [
+        {
+          "name": "approval_id",
+          "in": "path",
+          "required": true,
+          "description": "Approval ID",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": ["Approval Request"],
+        "summary": "Returns approval",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "approval_id",
+            "required": true,
+            "description": "Approval Request id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/approvalRequest"
+            }
+          },
+          "404": {
+            "description": "{'error': 'The requested id_num does not exist'}"
+          }
+        }
+      },
+      "put": {
+        "summary": "Insert/Update an approval request by ID",
+        "tags": [
+          "Approval Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "approval_id",
+            "required": true,
+            "description": "Approval Request id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "id_type",
+            "required": true,
+            "description": "ID type",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "update_system",
+            "required": true,
+            "description": "Update System Name",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "update_user",
+            "required": true,
+            "description": "Update User Name",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "source_update_date",
+            "required": true,
+            "description": "Source Update Date in epoch format",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "value_update_date",
+            "required": true,
+            "description": "Value Update Date in epoch format",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "approval_status",
+            "required": true,
+            "description": "Approval Status",
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "description": "Approval Request Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/approvalPostBody"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/approvalRequest"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Approval Request by ID",
+        "tags": [
+          "Approval Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "approval_id",
+            "required": true,
+            "description": "Approval Request Id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/approvalRequest"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad Request."
+          },
+          "404": {
+            "description": "{'error': 'The requested id_num does not exist'}"
+          }
+        }
+      }
+    }
+  },
+
+  "tags": [
+    {
+      "name": "Approval Request",
+      "description": "Example API for requesting and return approval requests"
+    }],
+
+  "components": {
+    "schemas": {
+      "id": {
+        "type": "string",
+        "format": "int"
+      },
+      "approvalPostBody": {
+        "type": "object",
+        "properties": {
+          "id_num": {
+            "type": "string",
+            "format": "string"
+          },
+          "id_type": {
+            "type": "string",
+            "format": "string"
+          },
+          "update_system": {
+            "type": "string",
+            "format": "string"
+          },
+          "update_user": {
+            "type": "string",
+            "format": "string"
+          },
+          "source_update_date": {
+            "type": "integer",
+            "format": "epoch timestamp"
+          },
+          "value_update_date": {
+            "type": "integer",
+            "format": "epoch timestamp"
+          },
+          "approval_status": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      },
+      "approvalRequest": {
+        "type": "object",
+        "properties": {
+          "id_num": {
+            "type": "string",
+            "format": "string"
+          },
+          "id_type": {
+            "type": "string",
+            "format": "string"
+          },
+          "update_system": {
+            "type": "string",
+            "format": "string"
+          },
+          "update_user": {
+            "type": "string",
+            "format": "string"
+          },
+          "source_update_date": {
+            "type": "integer",
+            "format": "epoch timestamp"
+          },
+          "value_update_date": {
+            "type": "integer",
+            "format": "epoch timestamp"
+          },
+          "approval_status": {
+            "type": "string",
+            "format": "string"
+          },
+          "db_last_update_date": {
+            "type": "integer",
+            "format": "epoch timestamp"
+          }
+        }
+      }
+    }
+  }
+}
