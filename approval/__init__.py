@@ -3,6 +3,19 @@ from config import config
 
 from .extensions import db, LOG
 
+from flask_swagger_ui import get_swaggerui_blueprint
+
+### swagger specific ###
+SWAGGER_URL = '/swagger'
+API_URL = '/static/swagger.json'
+SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "Approvals"
+    }
+)
+### end swagger specific ###
 
 def create_app(config_name='production', name=None):
     """ Creates an application instance """
@@ -21,7 +34,9 @@ def create_app(config_name='production', name=None):
     app.register_blueprint(api_blueprint)
     # app.register_blueprint(api_blueprint, url_prefix='/api/v1')
 
-    return app
+    # swagger ui
+    app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 
+    return app
 
 

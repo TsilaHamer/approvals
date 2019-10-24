@@ -26,14 +26,17 @@ def get_approval_by_id(id_num):
         return jsonify({'error': 'The requested id_num does not exist'}), 404
 
 
-@api.route('/upsert_approval', methods=['POST', 'PUT'])
-def upsert_approval():
-    approval_data = dict(request.form)
-    LOG.info('{current_timestamp}: request for update id {id_num} is handled'.
+@api.route('/approval/<string:id_num>', methods=['POST', 'PUT'])
+def upsert_approval(id_num):
+    approval_data = dict(request.form) or dict(request.args)
+    print(approval_data)
+    approval_data.update({'id_num': id_num})
+    LOG.info('{current_timestamp}: request for update id {id_num} is handled.'
+             ' Request data: {data}'.
              format(current_timestamp=time.time(),
-                    id_num=approval_data.get('id_num')))
-    approval_exists = Approval.objects(
-        id_num=approval_data.get('id_num')).first()
+                    id_num=id_num,
+                    data=str(approval_data)))
+    approval_exists = Approval.objects(id_num=id_num).first()
     approval = Approval.from_json(approval_data)
     if approval_exists:
         if approval_exists.value_update_date < \
@@ -49,12 +52,11 @@ def upsert_approval():
     approval_hist = Approval_Hist.from_json(approval_data)
     approval_hist.save()
     LOG.info('{current_timestamp}: id {id_num} was updated in db'.
-             format(current_timestamp=time.time(),
-                    id_num=approval_data.get('id_num')))
+             format(current_timestamp=time.time(), id_num=id_num))
     return jsonify(approval), 201
 
 
-@api.route('/delete_approval/<string:id_num>', methods=['DELETE'])
+@api.route('/approval/<string:id_num>', methods=['DELETE'])
 def delete_approval(id_num):
     LOG.info('{current_timestamp}: request for delete id {id_num} is handled'.
              format(current_timestamp=time.time(),
